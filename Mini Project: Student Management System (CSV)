@@ -1,0 +1,78 @@
+import csv
+import os
+
+CSV_FILE = 'students.csv'
+HEADERS = ['Roll Number', 'Name', 'Marks']
+
+def init_csv():
+    if not os.path.exists(CSV_FILE):
+        with open(CSV_FILE, 'w', newline='', encoding='utf-8') as file:
+            writer = csv.writer(file)
+            writer.writerow(HEADERS)
+
+def add_student():
+    roll = input("Enter Roll Number: ").strip()
+    name = input("Enter Name: ").strip()
+    marks = input("Enter Marks: ").strip()
+    
+    with open(CSV_FILE, 'a', newline='', encoding='utf-8') as file:
+        writer = csv.writer(file)
+        writer.writerow([roll, name, marks])
+    print("Student added successfully.")
+
+def search_student():
+    roll = input("Enter Roll Number to search: ").strip()
+    found = False
+    with open(CSV_FILE, 'r', encoding='utf-8') as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            if row['Roll Number'] == roll:
+                print(f"Found -> Roll: {row['Roll Number']}, Name: {row['Name']}, Marks: {row['Marks']}")
+                found = True
+                break
+    if not found:
+        print("Student not found.")
+
+def delete_student():
+    roll = input("Enter Roll Number to delete: ").strip()
+    rows = []
+    found = False
+    
+    with open(CSV_FILE, 'r', encoding='utf-8') as file:
+        reader = csv.reader(file)
+        header = next(reader)
+        rows.append(header)
+        for row in reader:
+            if row and row[0] == roll:
+                found = True
+            else:
+                rows.append(row)
+                
+    if found:
+        with open(CSV_FILE, 'w', newline='', encoding='utf-8') as file:
+            writer = csv.writer(file)
+            writer.writerows(rows)
+        print("Student deleted successfully.")
+    else:
+        print("Student not found.")
+
+def main():
+    init_csv()
+    while True:
+        print("\n--- Student Management System ---")
+        print("1. Add Student\n2. Search Student\n3. Delete Student\n4. Exit")
+        choice = input("Enter choice (1-4): ").strip()
+        
+        if choice == '1':
+            add_student()
+        elif choice == '2':
+            search_student()
+        elif choice == '3':
+            delete_student()
+        elif choice == '4':
+            break
+        else:
+            print("Invalid choice. Try again.")
+
+if __name__ == "__main__":
+    main()
